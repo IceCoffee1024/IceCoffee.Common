@@ -14,12 +14,18 @@ namespace IceCoffee.Common
 
         public EventForwarder(object instance)
         {
-            SubscribeAllEvents(instance);
+            SubscribeEvents(instance.GetType(), instance);
         }
 
-        private void SubscribeAllEvents(object instance)
+        public EventForwarder(Type staticType)
         {
-            var events = instance.GetType().GetEvents();
+            SubscribeEvents(staticType, null);
+        }
+
+        private void SubscribeEvents(Type type, object? instance)
+        {
+            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
+            var events = type.GetEvents(flags);
             foreach (var evt in events)
             {
                 var handler = CreateEventHandler(evt);
