@@ -12,20 +12,19 @@ namespace IceCoffee.Common
     {
         public event Action<string, EventArgs>? EventRaised;
 
-        public EventForwarder(object instance)
+        public EventForwarder(object instance, BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
         {
-            SubscribeEvents(instance.GetType(), instance);
+            SubscribeEvents(instance.GetType(), instance, bindingFlags);
         }
 
-        public EventForwarder(Type staticType)
+        public EventForwarder(Type staticType, BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
         {
-            SubscribeEvents(staticType, null);
+            SubscribeEvents(staticType, null, bindingFlags);
         }
 
-        private void SubscribeEvents(Type type, object? instance)
+        private void SubscribeEvents(Type type, object? instance, BindingFlags bindingFlags)
         {
-            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
-            var events = type.GetEvents(flags);
+            var events = type.GetEvents(bindingFlags);
             foreach (var evt in events)
             {
                 var handler = CreateEventHandler(evt);
